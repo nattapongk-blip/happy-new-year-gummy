@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year Gummy 💖</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+canvas { display: block; }
+
+/* ===== TEXT ===== */
+.text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: transform 3s ease, opacity 2s ease;
+}
+
+.text-container.fly {
+  transform: translate(-50%, -150%);
+  opacity: 0;
+}
+
+.letter {
+  display: inline-block;
+  font-size: 52px;
+  font-weight: bold;
+  animation: wave 2.6s ease-in-out infinite;
+}
+
+.sub { display: block; margin-top: 12px; }
+.sub .letter { font-size: 24px; }
+
+@keyframes wave {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+/* ===== SURPRISE BUTTON ===== */
+#surpriseBtn {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 32px;
+  font-size: 18px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(45deg, #ff5fa2, #ff85c2);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255,95,162,.7);
+  z-index: 10;
+}
+
+/* ===== LOADER ===== */
+#loader {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  display: none;
+  color: white;
+  text-align: center;
+}
+
+#bar {
+  height: 14px;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#barFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#ff5fa2,#ffd166,#6ef3ff);
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 เสียงพลุ -->
+<audio id="fireworkSound" src="firework.mp3" preload="auto"></audio>
+
+<!-- TEXT -->
+<div class="text-container" id="text"></div>
+
+<button id="surpriseBtn">Surprise 💝</button>
+
+<!-- LOADING -->
+<div id="loader">
+  <div>Happy New Year My Love Gummy</div>
+  <div id="bar"><div id="barFill"></div></div>
+  <div id="percent">0%</div>
+  <div style="opacity:.7;margin-top:8px;font-size:14px">
+    Loading love for Gummy 💕
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+/* ========= TEXT ========= */
+const textBox = document.getElementById("text");
+const mainText = "Happy New Year My Love ✨";
+const subText  = "Gummy 💕";
+
+function createText(text, isSub=false) {
+  const line = document.createElement("div");
+  if (isSub) line.className = "sub";
+
+  [...text].forEach((ch,i)=>{
+    const s = document.createElement("span");
+    s.className = "letter";
+    s.textContent = ch === " " ? "\u00A0" : ch;
+    s.style.animationDelay = `${i*0.15}s`;
+    s.style.color = `hsl(${Math.random()*360},100%,70%)`;
+    line.appendChild(s);
+  });
+  textBox.appendChild(line);
+}
+createText(mainText);
+createText(subText,true);
+
+setInterval(()=>{
+  document.querySelectorAll(".letter").forEach(l=>{
+    l.style.color = `hsl(${Math.random()*360},100%,70%)`;
+  });
+},180);
+
+/* ========= FIREWORK ========= */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+window.onresize = ()=>{canvas.width=innerWidth;canvas.height=innerHeight};
+
+let particles=[], rockets=[];
+const gravity = 0.05;
+const fwSound = document.getElementById("fireworkSound");
+
+/* เล่นเสียงพลุ (แก้เสียงไม่ดังซ้อน) */
+function playFireworkSound(){
+  const s = fwSound.cloneNode();
+  s.volume = 0.5;
+  s.play().catch(()=>{});
+}
+
+function rgb(){
+  return `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
+}
+
+function particle(x,y,vx,vy,size,color){
+  particles.push({x,y,vx,vy,life:100,alpha:1,size,color});
+}
+
+function circleExplosion(x,y){
+  playFireworkSound();
+  for(let i=0;i<120;i++){
+    const a=Math.PI*2*i/120;
+    particle(
+      x,y,
+      Math.cos(a)*(Math.random()*4+4),
+      Math.sin(a)*(Math.random()*4+4),
+      2,rgb()
+    );
+  }
+}
+
+function heartExplosion(x,y){
+  playFireworkSound();
+  for(let t=0;t<Math.PI*2;t+=0.08){
+    const r=12*(1-Math.sin(t));
+    particle(
+      x,y,
+      r*Math.cos(t)*0.15,
+      -r*Math.sin(t)*0.15,
+      2.5,"#ff5fa2"
+    );
+  }
+}
+
+function launchRocket(){
+  rockets.push({
+    x:Math.random()*canvas.width,
+    y:canvas.height,
+    vy:Math.random()*-8-10
+  });
+}
+
+function update(){
+  ctx.fillStyle="rgba(0,0,0,0.25)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  rockets.forEach((r,i)=>{
+    r.y+=r.vy;
+    ctx.fillStyle=rgb();
+    ctx.fillRect(r.x,r.y,2,10);
+    if(r.y<canvas.height*0.4){
+      Math.random()>0.5
+        ? heartExplosion(r.x,r.y)
+        : circleExplosion(r.x,r.y);
+      rockets.splice(i,1);
+    }
+  });
+
+  particles.forEach((p,i)=>{
+    p.vy+=gravity;
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.life--;
+    p.alpha-=0.01;
+    ctx.globalAlpha=p.alpha;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    if(p.life<=0)particles.splice(i,1);
+  });
+
+  ctx.globalAlpha=1;
+  requestAnimationFrame(update);
+}
+
+setInterval(launchRocket,400);
+update();
+
+/* ========= SURPRISE FLOW ========= */
+document.getElementById("surpriseBtn").onclick = ()=>{
+  document.getElementById("surpriseBtn").style.display="none";
+  textBox.classList.add("fly");
+  startLoading();
+};
+
+function startLoading(){
+  const loader=document.getElementById("loader");
+  const bar=document.getElementById("barFill");
+  const percent=document.getElementById("percent");
+  loader.style.display="block";
+  let p=0;
+  const t=setInterval(()=>{
+    p++;
+    bar.style.width=p+"%";
+    percent.textContent=p+"%";
+    if(p>=100){
+      clearInterval(t);
+      setTimeout(()=>location.href="surprise.html",800);
+    }
+  },40);
+}
+</script>
+
+</body>
+</html>

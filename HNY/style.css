@@ -1,0 +1,151 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg,#FFD48A 0%,#FFC56F 100%);
+}
+
+/* ===== TEXT ===== */
+.container {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 64px;
+  font-weight: bold;
+  color: #6C4AB6;
+  z-index: 2;
+}
+
+.bar {
+  font-size: 72px;
+  color: white;
+  opacity: 0.9;
+}
+
+.word {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  letter-spacing: 6px;
+  transition:
+    transform 1.2s cubic-bezier(.4,0,.2,1),
+    letter-spacing 1.2s cubic-bezier(.4,0,.2,1),
+    opacity 1s ease;
+}
+
+.squeeze {
+  transform: scaleX(0.92) scaleY(0.98);
+  letter-spacing: 2px;
+}
+
+.relax {
+  transform: scale(1.02);
+  letter-spacing: 8px;
+}
+
+/* ===== HEART ===== */
+.heart {
+  width: 56px;
+  height: 56px;
+  animation: heartbeat 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px rgba(255,60,60,.85));
+}
+
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  60% { transform: scale(0.96); }
+}
+
+.glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { filter: drop-shadow(0 0 14px rgba(255,60,60,.6)); }
+  to   { filter: drop-shadow(0 0 36px rgba(255,60,60,.95)); }
+}
+
+/* ===== LOCK ===== */
+.lock-box {
+  position: absolute;
+  bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 3;
+}
+
+.lock-box input {
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  text-align: center;
+  width: 200px;
+}
+
+.lock-box button {
+  padding: 8px 22px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(45deg,#ff5fa2,#ff85c2);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(255,95,162,.6);
+}
+
+.hint {
+  font-size: 13px;
+  color: #6C4AB6;
+  height: 16px;
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+@keyframes shake {
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  50%{transform:translateX(6px)}
+  75%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+/* ===== SPARKLES ===== */
+.sparkle {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle,#fff,rgba(255,255,255,0));
+  opacity: .8;
+  animation: floatUp linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0) scale(1); opacity:.8; }
+  to   { transform: translateY(-120vh) scale(.3); opacity:0; }
+}
+
+/* ===== ROSES ===== */
+.rose {
+  position: fixed;
+  bottom: -60px;
+  animation: roseUp linear forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes roseUp {
+  from { transform: translateY(0) rotate(0deg); opacity:1; }
+  to   { transform: translateY(-120vh) rotate(360deg); opacity:0; }
+}

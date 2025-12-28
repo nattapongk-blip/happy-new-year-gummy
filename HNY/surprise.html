@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>I Love You ❤️</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+  <span class="bar">|</span>
+  <div class="word" id="word">I LOVE YOU</div>
+  <span class="bar">|</span>
+</div>
+
+<!-- 🔐 LOCK -->
+<div class="lock-box">
+  <input
+    type="password"
+    id="codeInput"
+    placeholder="วันครบรอบของเรา 💕"
+    maxlength="6"
+  />
+  <button id="unlockBtn">ไปต่อ ➜</button>
+  <div class="hint" id="hint"></div>
+</div>
+
+<script>
+/* ================= HEART SVG ================= */
+const heartSVG = `
+<svg class="heart" viewBox="0 0 24 24">
+  <defs>
+    <radialGradient id="grad" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffd6d6"/>
+      <stop offset="60%" stop-color="#ff3b3b"/>
+      <stop offset="100%" stop-color="#c40000"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#grad)"
+    d="M12 21s-7-4.35-10-8.28C-0.5 8.5 2.42 3 7.5 5.1
+       9.5 6 12 8.5 12 8.5s2.5-2.5 4.5-3.4C21.58 3 24.5 8.5
+       22 12.72 19 16.65 12 21 12 21z"/>
+</svg>`;
+
+/* ================= TEXT LOOP ================= */
+const word = document.getElementById("word");
+
+function squeeze() {
+  word.classList.add("squeeze");
+  setTimeout(() => {
+    word.classList.remove("squeeze");
+    word.classList.add("relax");
+    setTimeout(() => word.classList.remove("relax"), 600);
+  }, 600);
+}
+
+function cycle() {
+  word.classList.remove("glow");
+  word.innerHTML = "I LOVE YOU";
+
+  setTimeout(() => {
+    squeeze();
+    word.innerHTML = `I ${heartSVG} YOU`;
+  }, 1200);
+
+  setTimeout(() => {
+    squeeze();
+    word.innerHTML = `I ${heartSVG} U`;
+  }, 2600);
+
+  setTimeout(() => {
+    squeeze();
+    word.innerHTML = `${heartSVG}`;
+    word.classList.add("glow");
+  }, 4000);
+
+  setTimeout(cycle, 6500);
+}
+cycle();
+
+/* ================= SPARKLES ================= */
+function createSparkle() {
+  const s = document.createElement("div");
+  s.className = "sparkle";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.bottom = "-10px";
+  s.style.animationDuration = 4 + Math.random() * 4 + "s";
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 7000);
+}
+setInterval(createSparkle, 300);
+
+/* ================= ROSE RAIN ================= */
+function startRoseRain() {
+  let count = 0;
+  const rain = setInterval(() => {
+    const rose = document.createElement("div");
+    rose.className = "rose";
+    rose.textContent = "🌹";
+    rose.style.left = Math.random() * 100 + "vw";
+    rose.style.fontSize = 24 + Math.random() * 20 + "px";
+    rose.style.animationDuration = 2 + Math.random() * 2 + "s";
+    document.body.appendChild(rose);
+    setTimeout(() => rose.remove(), 4000);
+    count++;
+    if (count > 70) clearInterval(rain);
+  }, 70);
+}
+
+/* ================= LOCK ================= */
+const correctCode = "140668";
+const input = document.getElementById("codeInput");
+const btn = document.getElementById("unlockBtn");
+const hint = document.getElementById("hint");
+
+btn.onclick = checkCode;
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") checkCode();
+});
+
+function checkCode() {
+  if (input.value === correctCode) {
+    hint.textContent = "ถูกต้องแล้ว 💖";
+
+    startRoseRain();
+
+    setTimeout(() => {
+      document.body.style.transition = "opacity 1.5s ease";
+      document.body.style.opacity = 0;
+    }, 2500);
+
+    setTimeout(() => {
+      location.href = "gallery.html";
+    }, 4000);
+  } else {
+    hint.textContent = "ลองคิดถึงวันของเราดูนะ 💕";
+    input.classList.add("shake");
+    setTimeout(() => input.classList.remove("shake"), 400);
+    input.value = "";
+  }
+}
+</script>
+
+</body>
+</html>
